@@ -1,0 +1,143 @@
+
+{% extends 'html/base.html' %}
+{% load static %}
+{% block content %}
+  
+<div class="container-fluid flex-grow-1 container-p-y">
+  <div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="py-3 mb-4"><span class="text-muted fw-light">Location/</span>Country</h4>
+    {% if messages %}
+      {% for message in messages %}
+        {% if message.tags == 'success' %}
+        <div class="alert alert-success alert-dismissible" role="alert">
+        {{message}}
+         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% elif message.tags == 'error' %}
+
+        <div class="alert alert-danger alert-dismissible" role="alert">
+         {{message}}
+         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+      {% endfor %}
+    {% endif %}   
+    <!-- Country Form -->
+    
+    <div class="row">
+      <div class="col-xl">
+        <div class="card mb-4">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Country Form</h5>
+          </div>
+        <div class="card-body">
+            <form action="{% url 'country' %}" method = "post" enctype= "multipart/form-data" >
+              {% csrf_token %}
+                  <div class="row">
+                   <div class="mb-3 col-md-6">
+                    <label class="form-label" for="basic-default-fullname">Country Name</label>
+                    <input type="text" class="form-control" id="basic-default-fullname" placeholder="India" name="country_name" />
+                  </div>
+
+                  <div class="mb-3 col-md-6">
+                     <label class="form-label" for="basic-default-company">Slug</label>
+                     <input type="text" class="form-control" id="basic-default-company" placeholder="IND" name="slug" />
+                  </div>
+
+                  <div class="mb-3 col-md-6">
+                    <label class="form-label" for="basic-default-company">Country Code</label>
+                    <input type="text" class="form-control" id="basic-default-company" placeholder="+91" name="code" />
+                  </div>
+
+                  <div class="mb-3 col-md-6">
+                    <label for="formFile" class="form-label">Country Flag</label>
+                    <input class="form-control" type="file" id="formFile" name="flag" />
+                  </div>
+
+                   <div class="md-3 col-md-6">
+                    <input class="form-check-input" type="checkbox" value="1" id="defaultCheck1" name="state_available" />
+                    <label class="form-check-label" for="defaultCheck1"> State Available </label>
+                   </div>
+
+                   <div class="my-2 col-md-12">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                   </div>
+                </div>
+              </form>
+
+                </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- Country Table -->
+    <div class="card">
+      <h5 class="card-header">Table Basic</h5>
+      <div class="table-responsive text-nowrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Sr. No</th>
+              <th>Country Name</th>
+              <th>Flag</th>
+              <th>Code</th>
+              <th>UUID</th>
+              <th>Add State</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+        <tbody class="table-border-bottom-0">
+          {% for item in data %}
+          <tr>
+            <th>{{forloop.counter}}</th>
+            <td>{{item.name}}</td> 
+            <td>
+              {% if item.flag %}
+              <img src="{{item.flag.url}}" alt="Icon" height="30px" width="50px">
+              {% endif %}
+            </td>
+
+            <td>{{item.code}}</td> 
+            <td>{{item.uuid}}</td> 
+            
+            <td>
+              {% if item.is_state_available %}
+              <button type="button" class="btn btn-primary">Add State</button>
+            {% else %}
+              <button type="button" class="btn btn-primary">Add City</button>
+              {% endif %}
+            </td>
+            
+            {% if item.is_active %}
+            <td> <a href="{% url 'country' item.id %}"><span class="badge bg-label-success me-1">Active</span></a></td>
+            {% else %}
+            <td> <a href="{% url 'country' item.id %}"><span class="badge bg-label-danger me-1">Inactive</span></a></td>
+
+            {% endif %}
+            <td>
+              
+                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                  <i class="bx bx-dots-vertical-rounded"></i>
+                </button>
+              
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="">
+                      <i class="bx bx-edit-alt me-1"></i> Edit
+                    </a>
+                    <a class="dropdown-item" href="{% url 'country' item.id %}">
+                      <i class="bx bx-trash me-1"></i> Delete
+                    </a>
+                  </div>
+              
+              </div>
+            </td>
+            
+          </tr>
+          {% endfor %}
+          
+         </tbody>
+        </table>
+      </div>
+    </div>
+   {% endblock %}
